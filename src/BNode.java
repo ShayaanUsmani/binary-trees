@@ -13,5 +13,4 @@ public class BNode{
 
     public void setRight(BNode r){right=r;}
     public void setLeft(BNode l){left=l;}
-    public void setVal(int v){val=v;}
 }
