@@ -179,6 +179,10 @@ public class BTree{
     }
 
     public void delete(int n){
+        if(root.getVal()==n){
+            root = null;
+            return;
+        }
         BNode node = findNode(root, n);
         // if the node is a leaf
         if(node.getLeft()==null && node.getRight()==null){
@@ -201,7 +205,20 @@ public class BTree{
             delete(lowestChild(node.getRight()).getVal());
             node.setVal(temp.getVal());
         }
+    }
 
+    public void add(BTree t){
+        addSubtree(t.root);
+    }
+    private void addSubtree(BNode root){
+        if(root==null){
+            return;
+        }
+        else{
+            addSubtree(root.getLeft());
+            addSubtree(root.getRight());
+        }
+        add(root.getVal());
     }
 
     // returns the lowest child of the given root
