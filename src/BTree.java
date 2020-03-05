@@ -5,12 +5,15 @@ public class BTree{
         root = null;
     }
 
-    private static final int IN = 0;
-    private static final int PRE = 1;
-    private static final int POST = 2;
+    // constant variable used to refer to the order of the
+    // tree display
+    public static final int IN = 0;     //(left)(node)(right)
+    public static final int PRE = 1;    //(node)(left)(right)
+    public static final int POST = 2;   //(left)(right)(node)
 
     public BNode getRoot(){return root;}
 
+    // adds a node into the tree with value n
     public void add(int n){
         BNode tmp = new BNode(n);
         if(root==null){
@@ -21,21 +24,28 @@ public class BTree{
         }
     }
 
-    public void add(BNode branch, BNode tmp){
-        if(tmp.getVal() > branch.getVal()){
-            if(branch.getRight()==null){
-                branch.setRight(tmp);
+    // add a node to a binary tree by comparing the adding node's (node)
+    // value to the current node's (curr) value, if the value of curr is less
+    // than node's, we call the same method again but with curr being the previous
+    // curr's right node, if the value of curr is higher, we set the new curr to
+    // curr's left. If we were suppose to go left (or right) and the left (or right)
+    // node is null, we simply set curr's left (or right) node to the node we are
+    // adding
+    public void add(BNode curr, BNode node){
+        if(node.getVal() > curr.getVal()){
+            if(curr.getRight()==null){
+                curr.setRight(node);
             }
             else{
-                add(branch.getRight(),tmp);
+                add(curr.getRight(),node);
             }
         }
-        else if(tmp.getVal() < branch.getVal()){
-            if(branch.getLeft()==null){
-                branch.setLeft(tmp);
+        else if(node.getVal() < curr.getVal()){
+            if(curr.getLeft()==null){
+                curr.setLeft(node);
             }
             else{
-                add(branch.getLeft(), tmp);
+                add(curr.getLeft(), node);
             }
         }
     }
@@ -69,7 +79,7 @@ public class BTree{
         System.out.println(this);
     }
 
-    // given integers 0,1, or 2, prints the binary tree's data in, pre, or post-order.
+    // given integers 0,1, or 2, prints the binary tree's data in, pre, or post-order
     public void display(int o){
         if(root==null){
             return;
@@ -178,6 +188,18 @@ public class BTree{
         }
     }
 
+    // delete a node given its value
+    // we first find the node and then consider 4 cases
+    // 1 - the node is the root -> set the root node to null
+    // 2 - the node is a leaf -> set the node to null
+    // 3 - the node only has a right or left child -> make
+    // the node it's right or left child and set the right or
+    // left child to null
+    // 4 - the node is is the root of a subtree -> set the value of
+    // the node to the lowest child to it's right since the lowest child
+    // in the right will be less than all the other right children and
+    // still be greater than the left child satisfying all rules of the
+    // binary tree.
     public void delete(int n){
         if(root.getVal()==n){
             root = null;
@@ -207,9 +229,12 @@ public class BTree{
         }
     }
 
+    // add method for adding a binary tree to another binary tree
     public void add(BTree t){
         addSubtree(t.root);
     }
+
+    // adds all nodes of tree to another tree in Post order
     private void addSubtree(BNode root){
         if(root==null){
             return;
@@ -219,6 +244,29 @@ public class BTree{
             addSubtree(root.getRight());
         }
         add(root.getVal());
+    }
+
+    // checks if the binary tree is height balanced
+    public boolean isBalanced(){
+        return checkHeightBalance(root);
+    }
+
+    // checks if the binary tree is height balanced by
+    // comparing the height of it's children recursively.
+    // if the absolute value of the difference of left subtree
+    // and the right subtree is equal to or less than 1, the left
+    // and right subtrees are both balanced, the tree is
+    // balanced, otherwise it is not.
+    private boolean checkHeightBalance(BNode node){
+        if(node == null){
+            return true;
+        }
+        if(Math.abs(height(node.getLeft(),0)-height(node.getRight(),0))<=1){
+            return checkHeightBalance(node.getRight()) && checkHeightBalance(node.getLeft());
+        }
+        else{
+            return false;
+        }
     }
 
     // returns the lowest child of the given root
